@@ -29,7 +29,6 @@ rp(moviesLinkPage).then(htmlString => {
     });
 
 
-
 }).catch(e => {
     console.log(e)
 })
