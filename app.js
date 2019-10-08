@@ -1,9 +1,15 @@
 var createError = require('http-errors');
+var mongoose = require('mongoose')
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+mongoose.connect('mongodb://localhost:27017/COM_WATCH', {useNewUrlParser: true,useUnifiedTopology:true});
+var db = mongoose.connection
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+  console.log("com_watch database");
+});
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -37,5 +43,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-app.listen(5050,console.log('server is runnin...'))
+app.listen(5050,console.log('server is running...: ', new Date().toTimeString()))
 module.exports = app;
