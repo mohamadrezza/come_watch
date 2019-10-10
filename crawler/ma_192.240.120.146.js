@@ -47,7 +47,7 @@ urls.forEach(function (url) {
                 errors.push(result)
             } else {
                 // console.log(i)
-                console.log(result)
+                // console.log(result)
                 results.push(result)
                 //return false;
             }
@@ -59,7 +59,7 @@ urls.forEach(function (url) {
 
         if (results.length > 1660) {
             console.log('writing to file ...')
-            //fs.writeFileSync('./ma_192.240.120.146.json', JSON.stringify(results))
+            fs.writeFileSync('./ma_192.240.120.146.json', JSON.stringify(results))
         }
 
     }).catch(e => {

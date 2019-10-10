@@ -48,6 +48,13 @@ const helpers = {
             .replace(/  +/g, ' ')
 
         return nameParsed;
+    },
+    isDubbed(name) {
+        let dubbed = name.search('DUBBED')
+        if (dubbed == -1) {
+            return false
+        }
+        return true
     }
 };
 
