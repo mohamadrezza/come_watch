@@ -49,14 +49,25 @@ const helpers = {
 
         return nameParsed;
     },
-    isDubbed(name) {
-        let dubbed = name.search('DUBBED')
-        if (dubbed == -1) {
-            return false
-        }
-        return true
-    },
-    getQuality(link){
+    bytesToSize(bytes) {
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+        if (bytes === 0) return 'n/a'
+        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10)
+        if (i === 0) return `${bytes} ${sizes[i]})`
+        return `${(bytes / (1024 ** i)).toFixed(1)} ${sizes[i]}`
+     },
+     isDubbed(name){
+         return name.includes('Dubbed') || 
+         name.includes('dubbed') ||
+         name.includes('Dub') ||
+         name.includes('Duble')
+     },
+     isSansored(name){
+         return name.includes('sansor') || 
+         name.includes('censored') ||
+         name.includes('Sansor')
+     },
+     getQuality(link){
         let qualities = ['720p' , '1080p' , '480p']
 
         let q = null;
@@ -127,7 +138,6 @@ const helpers = {
 
         return r;
      }
-
 };
 
 
