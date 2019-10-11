@@ -48,7 +48,84 @@ const helpers = {
             .replace(/  +/g, ' ')
 
         return nameParsed;
-    }
+    },
+    bytesToSize(bytes) {
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+        if (bytes === 0) return 'n/a'
+        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10)
+        if (i === 0) return `${bytes} ${sizes[i]})`
+        return `${(bytes / (1024 ** i)).toFixed(1)} ${sizes[i]}`
+     },
+     isDubbed(name){
+         return name.includes('Dubbed') || 
+         name.includes('dubbed') ||
+         name.includes('Dub') ||
+         name.includes('Duble')
+     },
+     isSansored(name){
+         return name.includes('sansor') || 
+         name.includes('censored') ||
+         name.includes('Sansor')
+     },
+     getQuality(link){
+        let qualities = ['720p' , '1080p' , '480p']
+
+        let q = null;
+        qualities.forEach(quality=>{
+            if(q !== null){
+                return false;
+            }
+
+            if(link.includes(quality)){
+                q = quality;
+            } 
+        })
+
+        if(link.includes('3D')){
+            q += " " + "3D"
+        }
+
+        if(link.includes('x265')){
+            q += " " + "x265"
+        }
+      
+      
+
+        return q;
+     },
+     getRelease(link){
+        let releases = [
+            'Bluray',
+            'BLURAY',
+            'bluray',
+            'WEB-DL',
+            'webdl',
+            'web-dl',
+            'HEVC',
+            'hevc',
+            'HDCam',
+            'hdcam',
+            'HDRip',
+            'hdrip',
+            'REMUX',
+            'Remux',
+            'HDTV',
+            'hdtv',
+        ]
+
+        let r = null;
+        releases.forEach(release=>{
+            if(r !== null){
+                return false;
+            }
+
+            if(link.includes(release)){
+                r = release;
+            } 
+        })
+
+        return r;
+     }
 };
 
 
