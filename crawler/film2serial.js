@@ -4,6 +4,21 @@ const helper = require("./../helpers/helpers");
 const fs = require("fs");
 const URL = require("url");
 
+const mongoose = require('mongoose');
+
+
+mongoose.connect("mongodb://localhost:27017/COM_WATCH", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+var db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function callback() {
+  console.log("connected to com_watch database");
+
+});
+
+
 let results = [];
 
 let urls = [
@@ -34,6 +49,11 @@ urls.forEach(function(url) {
           .then(response => {
             let htmlParsed = cheerio.load(response);
             htmlParsed("a").each(function(i, elem) {
+
+              if(results.length > 5){
+                return false;
+              }
+
               if (helper.isValidExt($(this).attr("href"))) {
                 let link = $(this).attr("href");
                 let name = $(this).text();

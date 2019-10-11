@@ -1,15 +1,6 @@
-const mongoose = require("mongoose");
+const mdb = require('moviedb')('6f0c625e9b7f81e80f475be102f64bfc');
 
-mongoose.connect("mongodb://localhost:27017/COM_WATCH", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-var db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-
-let connected = new Promise(function(resolve, reject) {
-  db.once("open", function callback() {
-    console.log("com_watch database");
-    resolve();
-  });
+mdb.searchMovie({query:"Dark Knight"}  , (err, res) => {
+  console.log(err)
+  console.log(res.results[0]);
 });
