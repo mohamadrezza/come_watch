@@ -74,29 +74,3 @@ async function job() {
     }
 }
 job()
-
-
-
-
-
-
-
-
-
-
-//origin feature code
-// function job() {
-//     source.forEach(async item => {
-//         try {
-//             var htmlPage = await rp(item)
-//             console.log(htmlPage)
-//         } catch (e) {
-//             console.log(e.message)
-
-//         }
-
-//     })
-
-
-// }
-// job()
