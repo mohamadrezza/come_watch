@@ -9,24 +9,24 @@ rp(source).then(htmlString => {
     const $ = cheerio.load(htmlString)
     $('a').each(async (i) => {
         try {
-            var urls = $('a').eq(i).attr('href').replace('/C', '');
+            var urls = $('a').eq(i).attr('href');
             var movieLinks = source + urls
             if (urls == '/web.config' || urls == '/') {
                 return false;
             }
             var link = await rp(movieLinks)
-            var xxx = cheerio.load(link)
-            xxx('a').each(async test => {
-                var ppp = xxx('a').eq(test).attr('href')
-                var movieLinks = source + ppp
-                if (ppp == '/' || ppp == '/L/Alarm/') {
+            var page = cheerio.load(link)
+            page('a').each(async test => {
+                var route = page('a').eq(test).attr('href')
+                var movieLinks = source + route
+                if (route == '/' || route == '/L/Alarm/') {
                     return false
                 }
                 var dlPage = await rp(movieLinks)
-                var page = cheerio.load(dlPage)
-                page('a').each(async item => {
-                    var name = page('a').eq(item).text()
-                    var link = page('a').eq(item).attr('href')
+                var nextPage = cheerio.load(dlPage)
+                nextPage('a').each(async item => {
+                    var name = nextPage('a').eq(item).text()
+                    var link = nextPage('a').eq(item).attr('href')
                     let year = helper.getYearFromMovieName(name);
                     let parsedName = helper.parseMovieName(name, year)
                     var dlLink = source + link
@@ -48,10 +48,9 @@ rp(source).then(htmlString => {
                         results.push(result)
                       
                     }
-                    fs.writeFileSync('./shahrdl.json',JSON.stringify(results))
-
                 })
             })
+    console.log(results)
             
         } catch (e) {
             console.log(e.message)

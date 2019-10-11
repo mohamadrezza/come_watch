@@ -22,7 +22,7 @@ const helpers = {
     isValidExt(name) {
         let ext = this.getMovieExt(name);
 
-        return ['mkv', 'mp4', 'avi', 'mov', 'wmv'].includes(ext);
+        return ['mkv', 'mp4', 'avi', 'mov', 'wmv','flv'].includes(ext);
 
     },
 
@@ -55,7 +55,79 @@ const helpers = {
             return false
         }
         return true
-    }
+    },
+    getQuality(link){
+        let qualities = ['720p' , '1080p' , '480p']
+
+        let q = null;
+        qualities.forEach(quality=>{
+            if(q !== null){
+                return false;
+            }
+
+            if(link.includes(quality)){
+                q = quality;
+            } 
+        })
+
+        if(link.includes('3D')){
+            q += " " + "3D"
+        }
+
+        if(link.includes('x265')){
+            q += " " + "x265"
+        }
+      
+      
+
+        return q;
+     },
+     getRelease(link){
+        let releases = [
+            'Bluray',
+            'BLURAY',
+            'bluray',
+            'blue-ray',
+            'Web-Dl',
+            'Web-DL',
+            'DivX',
+            'DVBRip',
+            'WEB DL',
+            'WEBRip ',
+            'WEB Rip',
+            'HC',   
+            'BluRay',
+            'WEB-DL',
+            'WebDL ',
+            'webdl',
+            'web-dl',
+            'HEVC',
+            'hevc',
+            'HDCam',
+            'hdcam',
+            'HDRip',
+            'hdrip',
+            'REMUX',
+            'Remux',
+            'HDTV',
+            'hdtv',
+            'BrRip'
+        ]
+
+        let r = null;
+        releases.forEach(release=>{
+            if(r !== null){
+                return false;
+            }
+
+            if(link.includes(release)){
+                r = release;
+            } 
+        })
+
+        return r;
+     }
+
 };
 
 
