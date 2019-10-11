@@ -60,7 +60,8 @@ const helpers = {
          return name.includes('Dubbed') || 
          name.includes('dubbed') ||
          name.includes('Dub') ||
-         name.includes('Duble')
+         name.includes('Duble')||
+         name.includes('DUBBED')
      },
      isSansored(name){
          return name.includes('sansor') || 
@@ -68,7 +69,7 @@ const helpers = {
          name.includes('Sansor')
      },
      getQuality(link){
-        let qualities = ['720p' , '1080p' , '480p']
+        let qualities = ['720p' , '1080p' , '480p','DVDRip']
 
         let q = null;
         qualities.forEach(quality=>{
@@ -113,6 +114,7 @@ const helpers = {
             'webdl',
             'web-dl',
             'HEVC',
+            'DVDRip',
             'hevc',
             'HDCam',
             'hdcam',
