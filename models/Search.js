@@ -7,4 +7,6 @@ var searchSchema = new mongoose.Schema({
     value:String,
     user:{ref:'User',type:ObjectId}
 })
-exports.search = mongoose.model('Search',searchSchema)
+var Search= mongoose.model('Search',searchSchema)
+
+module.exports = Search;

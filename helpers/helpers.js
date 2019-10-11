@@ -22,7 +22,7 @@ const helpers = {
     isValidExt(name) {
         let ext = this.getMovieExt(name);
 
-        return ['mkv', 'mp4', 'avi', 'mov', 'wmv'].includes(ext);
+        return ['mkv', 'mp4', 'avi', 'mov', 'wmv','flv'].includes(ext);
 
     },
 
@@ -98,7 +98,18 @@ const helpers = {
             'Bluray',
             'BLURAY',
             'bluray',
+            'blue-ray',
+            'Web-Dl',
+            'Web-DL',
+            'DivX',
+            'DVBRip',
+            'WEB DL',
+            'WEBRip ',
+            'WEB Rip',
+            'HC',   
+            'BluRay',
             'WEB-DL',
+            'WebDL ',
             'webdl',
             'web-dl',
             'HEVC',
@@ -111,6 +122,7 @@ const helpers = {
             'Remux',
             'HDTV',
             'hdtv',
+            'BrRip'
         ]
 
         let r = null;
