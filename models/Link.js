@@ -7,4 +7,5 @@ var linkSchema = new mongoose.Schema({
     user:[{ref:'User',type:ObjectId}],
     movie:{ref:'Movie',type:ObjectId}
 })
-exports.Link = mongoose.model('Link',linkSchema)
+var Link = mongoose.model('Link',linkSchema)
+module.exports=Link

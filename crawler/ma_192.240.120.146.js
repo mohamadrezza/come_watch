@@ -1,3 +1,4 @@
+//usa server
 const cheerio = require('cheerio')
 const rp = require('request-promise');
 const helper = require('./../helpers/helpers');
@@ -14,9 +15,9 @@ let urls = [
     "http://192.240.120.146/da01/fullhd1/mkv/",
     "http://192.240.120.146/da01/fullhd1/mkv/",
     "http://192.240.120.146/da03/fullhd/mkv/",
-    'http://www.kingdomfantasy.com/videos/',
-    'http://178.162.145.97/publicDL/Movies/',
-    'http://37.187.126.11/Films/'
+    'http://www.kingdomfantasy.com/videos/', //france
+    'http://178.162.145.97/publicDL/Movies/', //netherland
+    'http://37.187.126.11/Films/' //france
 ];
 let errors = [];
 urls.forEach(function (url) {
@@ -47,7 +48,7 @@ urls.forEach(function (url) {
                 errors.push(result)
             } else {
                 // console.log(i)
-                console.log(result)
+                // console.log(result)
                 results.push(result)
                 //return false;
             }
@@ -59,7 +60,7 @@ urls.forEach(function (url) {
 
         if (results.length > 1660) {
             console.log('writing to file ...')
-            //fs.writeFileSync('./ma_192.240.120.146.json', JSON.stringify(results))
+            fs.writeFileSync('./ma_192.240.120.146.json', JSON.stringify(results))
         }
 
     }).catch(e => {

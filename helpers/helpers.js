@@ -22,7 +22,7 @@ const helpers = {
     isValidExt(name) {
         let ext = this.getMovieExt(name);
 
-        return ['mkv', 'mp4', 'avi', 'mov', 'wmv'].includes(ext);
+        return ['mkv', 'mp4', 'avi', 'mov', 'wmv','flv'].includes(ext);
 
     },
 
@@ -60,7 +60,8 @@ const helpers = {
          return name.includes('Dubbed') || 
          name.includes('dubbed') ||
          name.includes('Dub') ||
-         name.includes('Duble')
+         name.includes('Duble')||
+         name.includes('DUBBED')
      },
      isSansored(name){
          return name.includes('sansor') || 
@@ -68,7 +69,7 @@ const helpers = {
          name.includes('Sansor')
      },
      getQuality(link){
-        let qualities = ['720p' , '1080p' , '480p']
+        let qualities = ['720p' , '1080p' , '480p','DVDRip']
 
         let q = null;
         qualities.forEach(quality=>{
@@ -98,10 +99,22 @@ const helpers = {
             'Bluray',
             'BLURAY',
             'bluray',
+            'blue-ray',
+            'Web-Dl',
+            'Web-DL',
+            'DivX',
+            'DVBRip',
+            'WEB DL',
+            'WEBRip ',
+            'WEB Rip',
+            'HC',   
+            'BluRay',
             'WEB-DL',
+            'WebDL ',
             'webdl',
             'web-dl',
             'HEVC',
+            'DVDRip',
             'hevc',
             'HDCam',
             'hdcam',
@@ -111,6 +124,7 @@ const helpers = {
             'Remux',
             'HDTV',
             'hdtv',
+            'BrRip'
         ]
 
         let r = null;
@@ -125,7 +139,13 @@ const helpers = {
         })
 
         return r;
-     }
+     },
+
+     async asyncForEach(array, callback) {
+        for (let index = 0; index < array.length; index++) {
+          await callback(array[index], index, array);
+        }
+    }
 };
 
 
