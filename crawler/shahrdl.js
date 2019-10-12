@@ -43,24 +43,33 @@ async function job() {
                     if (yearLink != '[To Parent Directory]') {
                         var link = await rp(source + yearLink)
                         var page = cheerio.load(link)
-                        page('a').each(item => {
-                            var movie = page('a').eq(item).text()
-                            let year = helper.getYearFromMovieName(movie);
-                            let parsedName = helper.parseMovieName(movie, year)
-                            var dlLink = source + yearLink + '/' + movie
-                            if (movie != '[To Parent Directory]') {
-                                var result = {
-                                    name: parsedName,
-                                    year: year,
-                                    quality: helper.getQuality(movie),
-                                    release: helper.getRelease(movie),
-                                    dubbed: helper.isDubbed(movie),
-                                    link: dlLink
-                                }
-                            }
-                            // a lot of movies !!
-                            // console.table(result) 
+                        page('a').each(async item => {
+                            try {
+                                var movie = page('a').eq(item).text()
+                                let year = helper.getYearFromMovieName(movie);
+                                let parsedName = helper.parseMovieName(movie, year)
+                                var dlLink = source + yearLink + '/' + movie
+                                var file = await rp(dlLink, {
+                                    method: 'HEAD'
+                                })
 
+                                if (movie != '[To Parent Directory]') {
+                                    var result = {
+                                        name: parsedName,
+                                        year: year,
+                                        quality: helper.getQuality(movie),
+                                        release: helper.getRelease(movie),
+                                        dubbed: helper.isDubbed(movie),
+                                        link: dlLink,
+                                        size:helper.bytesToSize(file["content-length"])
+                                    }
+
+                                }
+                                // a lot of movies !!
+                                console.table(result)
+                            } catch (e) {
+                                console.log(e.message)
+                            }
                         })
                     }
                 } catch (e) {
