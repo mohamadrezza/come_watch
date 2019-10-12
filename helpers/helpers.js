@@ -140,12 +140,7 @@ const helpers = {
 
         return r;
      },
-     isImage(link){
-        var formats = ['jpg','jpeg']
-        formats.forEach(format=>{
-            if (link.includes(format))return true
-        })
-     }
+    
      
 };
 
