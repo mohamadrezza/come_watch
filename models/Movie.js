@@ -6,14 +6,11 @@ var MovieSchema =new mongoose.Schema({
     id:ObjectId,
     name:String,
     year:String,
-    release:[{type:Object}],
-    dubbed:Boolean,
     category:[{type:Object}],
     imdb:String,
     cover:String,
     description:String,
     link:[{type:Object}],
-    quality:[{type:Object}],
     report:[String]
 })
 
