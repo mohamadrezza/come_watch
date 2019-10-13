@@ -1,5 +1,7 @@
 const TelegramBot = require("node-telegram-bot-api");
 
+const botService = require('./../services/bot');
+
 const token = "866254928:AAHToaJ-dNeXahZA_CcfZvKbkQtE0wJMSaI";
 const bot = new TelegramBot(token, { polling: true });
 
@@ -24,53 +26,15 @@ bot.on("message", msg => {
 	}
 
 	if (msg.text.codePointAt(0) === "🎥".codePointAt(0)) {
-		bot.sendMessage(chatId, "selected movie: " + msg.text);
-		bot.sendPhoto(
-			chatId,
-			"https://upload.wikimedia.org/wikipedia/en/8/8a/Dark_Knight.jpg",
-			{
-				caption: `The Dark Knight Rises (2012)
-        IMDB:8.5
-        ژانر:#اکشن #مهیج 
-        ستارگان : Christian Bale, Tom Hardy, Joseph Gordon-Levitt, Gary Oldman 
-        #فیلم_سینمایی #خارجی`
-			}
-		);
-
-		bot.sendMessage(
-			chatId,
-			"i found 5 movies\nplease select movie to give u link",
-			{
-				reply_markup: {
-					keyboard: [
-						["📥 720p Bluray 678MB"],
-						["📥 1080p WEB-DL 2021MB"]
-					]
-				}
-			}
-		);
-
+		botService.selectMovie(bot , msg , chatId)
 		return true;
 	}
 
-	bot.sendMessage(chatId, `🔎Searching: ${msg.text}`);
 
-	bot.sendMessage(
-		chatId,
-		"i found 5 movies\nplease select movie to give u link",
-		{
-			reply_markup: {
-				keyboard: [
-					["🎥 Dark Knight 2008"],
-					["🎥 Keyboard 2006"],
-					["🎥 Keyboard 2010"],
-					["🎥 Keyboard 1989"],
-					["🎥 Keyboard 2016"],
-					["🎥  I'm robot 2017"]
-				]
-			}
-		}
-	);
+
+	botService.searchMovie(bot , msg , chatId);
+
+	
 });
 
 exports.newMessage = function(req, res) {

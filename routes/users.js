@@ -5,5 +5,5 @@ var User = require ('../controller/UserController')
 router.get('/', function(req, res, next) {
     res.send('respond with a resource');
 });
-router.get('/create',User.create)
+// router.get('/create',User.create)
 module.exports = router;

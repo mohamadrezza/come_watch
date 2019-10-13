@@ -28,21 +28,15 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function callback() {
   console.log("connected to com_watch database");
 
-    // asyncForEach(films , async film => {
-    //         // console.log('before')
+    asyncForEach(films , async film => {
+            // console.log('before')
         
-    //         await movieController.create(film)
+            await movieController.create(film)
         
-    //         // console.log('after')
-    // } )
+            // console.log('after')
+    } )
 
-    await films.map(async film => {
-        // console.log('before')
-
-        await movieController.create(film)
-
-        // console.log('after')
-    });
+    
 
 
 //   crawl();
