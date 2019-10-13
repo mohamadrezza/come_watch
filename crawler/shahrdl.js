@@ -62,33 +62,32 @@ async function job() {
                         var link = await rp(source + yearLink)
                         var page = cheerio.load(link)
                         page('a').each(async item => {
-                            var movie = page('a').eq(item).text()
-                            let year = helper.getYearFromMovieName(movie);
-                            let parsedName = helper.parseMovieName(movie, year)
-                            var dlLink = source + yearLink + '/' + movie
-                            if (movie != '[To Parent Directory]') {
-                                var result = {
-                                    name: parsedName,
-                                    year: year,
-                                    link:{
+                            try {
+                                var movie = page('a').eq(item).text()
+                                let year = helper.getYearFromMovieName(movie);
+                                let parsedName = helper.parseMovieName(movie, year)
+                                var dlLink = source + yearLink + '/' + movie
+                                var file = await rp(dlLink, {
+                                    method: 'HEAD'
+                                })
+
+                                if (movie != '[To Parent Directory]') {
+                                    var result = {
+                                        name: parsedName,
+                                        year: year,
                                         quality: helper.getQuality(movie),
                                         release: helper.getRelease(movie),
                                         dubbed: helper.isDubbed(movie),
                                         link: dlLink,
+                                        size:helper.bytesToSize(file["content-length"])
                                     }
-                                }
-                                //console.log(result)
-                                console.log('result before')
-                                try{
-                                await movieController.create(result);
-                                }catch(errpr){
-                                    console.log(errpr)
-                                }
-                                console.log('result after')
-                            }
-                            // a lot of movies !!
-                            // console.table(result) 
 
+                                }
+                                // a lot of movies !!
+                                console.table(result)
+                            } catch (e) {
+                                console.log(e.message)
+                            }
                         })
                     }
                 } catch (e) {
