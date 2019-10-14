@@ -113,48 +113,68 @@ exports.linkSelect = async function (bot, msg, chatId) {
     let user = await userController.findOrCreate(msg.from);
 
     let movieName = await Search.findOne({
-        action : 'movie_select',
-        user:user._id
-    }).sort({created_at: -1})
-    .select(['input'])
-    
+            action: 'movie_select',
+            user: user._id
+        }).sort({
+            created_at: -1
+        })
+        .select(['input'])
 
-    if(!movieName.input){
-        bot.sendMessage(chatId , "خطا در دریافت اطلاعات،با پشتیبانی تماس بگیرین");
+
+    if (!movieName.input) {
+        bot.sendMessage(chatId, "خطا در دریافت اطلاعات،با پشتیبانی تماس بگیرین😫");
         return false;
     }
 
     movieName = movieName.input;
     console.log(movieName)
-    
 
-    let movie = await Movie.findOne({name:movieName});
+
+    let movie = await Movie.findOne({
+        name: movieName
+    });
 
 
     let quality = helper.getQuality(linkName);
     let release = helper.getRelease(linkName);
-    let size  = helper.getSize(linkName);
+    
+    let size = helper.getSize(linkName);
+    if(size){
+        size = size.replace(/(mb|gb|kb|bytes)/i, " $1");
+    }
     let dubbed = helper.isDubbed(linkName);
     let censored = helper.isSansored(linkName);
 
 
-    return;
+    let links = movie.link.filter(lin => {
+        return lin.quality == quality &&
+            lin.release == release &&
+            lin.size == size &&
+            lin.dubbed == dubbed &&
+            lin.censored == censored;
+    })
 
-    if(!movie.cover){
-        bot.sendMessage(
-        chatId,
-         `${link}\nربات دانلود رایگان مستقیم فیلم و سریال\n@comewatch_bot`);
+
+    if (links.length === 0) {
+        bot.sendMessage(chatId, "دریافت لینک با خطا روبرو شد با پشتیبانی تماس بگیرین😫");
+        return false;
+    }
+
+    bot.sendMessage(chatId, "به همین راحتی میتونی لینک دانلودت آماده شد،بهتر از اینم مگه میشه؟😍");
+  
     
+    let caption = `${movieName}\n📎 لینک دانلود: <a href="${links[0].link}">${(links[0].quality || "") + (links[0].release || "")}  ${links[0].size || ""}</a>\nربات دانلود رایگان مستقیم فیلم و سریال\n@comewatch_bot`;
+
+    if (!movie.cover) {
+        bot.sendMessage(chatId, caption,{parse_mode : "HTML"});
         return false;
     }
 
 
-    bot.sendPhoto(
-        chatId,
-        cover, {
-            caption: `${link}\nربات دانلود رایگان مستقیم فیلم و سریال\n@comewatch_bot`
-        }
-    );
+    bot.sendPhoto(chatId, movie.cover, {
+        caption: caption,
+        parse_mode : "HTML"
+    });
 
     // bot.sendMessage(
     //     chatId,

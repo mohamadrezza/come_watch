@@ -1,3 +1,10 @@
+const helper = require('./helpers/helpers')
+
+
+let link = "📥1080p Dubbed 1.9GB"
+link = helper.getSize(link).replace(/(mb|gb|kb|bytes)/i," $1");
+console.log(link)
+return;
 let fs = require('fs')
 
 

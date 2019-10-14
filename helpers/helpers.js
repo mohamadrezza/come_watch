@@ -157,7 +157,8 @@ const helpers = {
         })
     },
     getSize(link){
-        
+        link = link.match(/([0-9]+( |.[0-9]+)(mb|gb|kb|Bytes))/i)
+        return link && link.length>= 1 ? link[0] : null;
     }
 };
 
