@@ -155,6 +155,9 @@ const helpers = {
                 resolve(res);
             });
         })
+    },
+    getSize(link){
+        
     }
 };
 

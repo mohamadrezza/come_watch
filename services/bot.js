@@ -26,7 +26,7 @@ exports.searchMovie = async (bot, msg, chatId) => {
 
         let user = await userController.findOrCreate(msg.from);
 
-        await Search.create({
+        Search.create({
             input: msg.text,
             action: 'search',
             user: user._id
@@ -69,7 +69,7 @@ exports.selectMovie = async (bot, msg, chatId) => {
 
     let user = await userController.findOrCreate(msg.from);
 
-    await Search.create({
+    Search.create({
         input: movieName,
         action: 'movie_select',
         user: user._id
@@ -79,22 +79,80 @@ exports.selectMovie = async (bot, msg, chatId) => {
     let cover = movie.cover;
     if (cover === null) {
         //get cover from api
-
-        let movieSearches = await helper.searchMovieDB(movieName.replace(movie.year, ''));
-        cover = movieSearches.results.length > 0 ? movieSearches.results[0].poster_path : null;
-        cover = "https://image.tmdb.org/t/p/original" + cover;
-        await Movie.findOneAndUpdate({
-            name: movieName
-        }, {
-            cover: cover
-        })
+        try {
+            let movieSearches = await helper.searchMovieDB(movieName.replace(movie.year, ''));
+            cover = movieSearches.results.length > 0 ? movieSearches.results[0].poster_path : null;
+            cover = "https://image.tmdb.org/t/p/original" + cover;
+            await Movie.findOneAndUpdate({
+                name: movieName
+            }, {
+                cover: cover
+            })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
-    // bot.sendMessage(chatId, "selected movie: " + msg.text);
+    bot.sendMessage(chatId,
+        `✨ فیلم ${msg.text.replace('🎥' , '')} انتخاب شد\nحالا از بین لینک های زیر بین کیفیت های مختلف یکی رو انتخاب کن تا برات بفرستیم:`, {
+            reply_markup: {
+                keyboard: movie.link.map(link => {
+                    return [`📥${link.quality} ${link.release || ""} ${link.dubbed ? 'Dubbed' : ''} ${link.censored ? 'Censored' : ''} ${link.size? link.size.replace(" " , "") : ""}`.replace(/  +/g, ' ')]
+                })
+            }
+        });
+
+
+}
+
+
+exports.linkSelect = async function (bot, msg, chatId) {
+
+    let linkName = msg.text.replace('📥', '');
+
+    let user = await userController.findOrCreate(msg.from);
+
+    let movieName = await Search.findOne({
+        action : 'movie_select',
+        user:user._id
+    }).sort({created_at: -1})
+    .select(['input'])
+    
+
+    if(!movieName.input){
+        bot.sendMessage(chatId , "خطا در دریافت اطلاعات،با پشتیبانی تماس بگیرین");
+        return false;
+    }
+
+    movieName = movieName.input;
+    console.log(movieName)
+    
+
+    let movie = await Movie.findOne({name:movieName});
+
+
+    let quality = helper.getQuality(linkName);
+    let release = helper.getRelease(linkName);
+    let size  = helper.getSize(linkName);
+    let dubbed = helper.isDubbed(linkName);
+    let censored = helper.isSansored(linkName);
+
+
+    return;
+
+    if(!movie.cover){
+        bot.sendMessage(
+        chatId,
+         `${link}\nربات دانلود رایگان مستقیم فیلم و سریال\n@comewatch_bot`);
+    
+        return false;
+    }
+
+
     bot.sendPhoto(
         chatId,
         cover, {
-            caption: `${movieName}\nربات دانلود رایگان مستقیم فیلم و سریال\n@comewatch_bot`
+            caption: `${link}\nربات دانلود رایگان مستقیم فیلم و سریال\n@comewatch_bot`
         }
     );
 
@@ -109,5 +167,4 @@ exports.selectMovie = async (bot, msg, chatId) => {
     //         }
     //     }
     // );
-
 }

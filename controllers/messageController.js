@@ -17,11 +17,7 @@ bot.on("message", msg => {
 	}
 
 	if (msg.text.codePointAt(0) === "📥".codePointAt(0)) {
-		bot.sendMessage(chatId, "link download will be send");
-		bot.sendMessage(
-			chatId,
-			"Here you are\nhttp://dl.finaldl.info/Movie/2012/Zero%20Dark%20Thirty%202012/Zero.Dark.Thirty.2012.1080p.ShAaNiG_%28_FinalMovie_%29.mkv"
-		);
+		botService.linkSelect(bot , msg , chatId)
 		return true;
 	}
 
