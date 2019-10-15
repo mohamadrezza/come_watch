@@ -45,9 +45,9 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
-
-mongoose.connect(`mongodb://localhost:27017/${process.env.MONGO_DB}`, {
+mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.MONGO_DB}`, {
   useNewUrlParser: true,
+  authSource:'admin',
   useUnifiedTopology: true
 });
 var db = mongoose.connection;
@@ -55,7 +55,7 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function callback() {
   console.log("connected to com_watch database");
   app.listen(
-    8080,
+    3000,
     console.log("server is running: ", new Date().toTimeString())
   );
 });
