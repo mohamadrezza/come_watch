@@ -134,7 +134,10 @@ exports.selectMovie = async (bot, msg, chatId) => {
 
 
     let movie = await Movie.findOneAndUpdate({
-        name: movieName
+        name: {
+            $regex:movieName,
+            $options:"i"
+        }
     }, {
         $inc: {
             views: 1
@@ -147,6 +150,11 @@ exports.selectMovie = async (bot, msg, chatId) => {
         user: user._id
     });
 
+
+    if(movie === null){
+        bot.sendMessage(chatId , "خطا در دریافت اطلاعات،با پشتیبانی تماس بگیرین😫");
+        return false;
+    }
 
     let cover = movie.cover;
     if (cover === null) {
@@ -216,7 +224,7 @@ exports.selectMovie = async (bot, msg, chatId) => {
         `✨ فیلم ${msg.text.replace('🎥' , '')} انتخاب شد\nحالا از بین لینک های زیر بین کیفیت های مختلف یکی رو انتخاب کن تا برات بفرستیم:`, {
             reply_markup: {
                 keyboard: movie.link.map(link => {
-                    return [`📥${link.quality} ${link.release || ""} ${link.dubbed ? 'Dubbed' : ''} ${link.censored ? 'Censored' : ''} ${link.size? link.size.replace(" " , "") : ""}`.replace(/  +/g, ' ')]
+                    return [`📥${link.quality || ""} ${link.release || ""} ${link.dubbed ? 'Dubbed' : ''} ${link.censored ? 'Censored' : ''} ${link.size? link.size.replace(" " , "") : ""}`.replace(/  +/g, ' ')]
                 })
             }
         });
@@ -270,6 +278,15 @@ exports.linkSelect = async function (bot, msg, chatId) {
 
 
     let links = movie.link.filter(lin => {
+        
+        if(lin.censored === undefined){
+            lin.censored = false;
+        }
+        
+        if(lin.dubbed === undefined){
+            lin.dubbed = false;
+        }
+
         return lin.quality == quality &&
             lin.release == release &&
             lin.size == size &&
@@ -289,7 +306,7 @@ exports.linkSelect = async function (bot, msg, chatId) {
 
     bot.sendMessage(chatId, "به همین راحتی میتونی لینک دانلودت آماده شد،بهتر از اینم مگه میشه؟😍");
 
-    let caption = `${movieName}\n📎 لینک دانلود: <a href="${links[0].link}">${(links[0].quality || "") + (links[0].release || "")}  ${links[0].size || ""} ${links[0].dubbed ? 'Dubbed' : ''} ${links[0].censored ? 'Censored' : ''}</a>\nربات دانلود رایگان مستقیم فیلم\n@comewatch_bot`;
+    let caption = `${movieName}\n📎 لینک دانلود: <a href="${links[0].link}">${(links[0].quality || "")  + (links[0].release || "")}  ${links[0].size || ""} ${links[0].dubbed ? 'Dubbed' : ''} ${links[0].censored ? 'Censored' : ''}</a>\nربات دانلود رایگان مستقیم فیلم\n@comewatch_bot`;
 
 
 

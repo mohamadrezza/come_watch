@@ -124,7 +124,8 @@ const helpers = {
             'Remux',
             'HDTV',
             'hdtv',
-            'BrRip'
+            'BrRip',
+            'HDCAM'
         ]
 
         let r = null;
