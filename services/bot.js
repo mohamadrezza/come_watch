@@ -9,12 +9,14 @@ const helper = require('./../helpers/helpers')
 let userController = require('./../controller/UserController')
 
 
+
+
 const canUseBot = async function (bot, user, chatId) {
 
 
-    return new Promise((resolve) => {
-        resolve(true)
-    })
+    // return new Promise((resolve) => {
+    //     resolve(true)
+    // })
 
 
     let searchDone = await Log.find({
@@ -24,12 +26,14 @@ const canUseBot = async function (bot, user, chatId) {
 
     return new Promise(async (resolve) => {
 
-        if (searchDone > 5) {
+        if (searchDone > 1) {
             bot.getChatMember(process.env.CHANNEL_USERNAME, chatId).then(res => {
                 if (res.status === 'left') {
                     resolve(false)
                 }
                 resolve(true)
+            }).catch(e=>{
+                console.log(e)
             })
         } else {
             resolve(true)

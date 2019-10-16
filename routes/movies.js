@@ -24,6 +24,7 @@ router.get('/', async function (req, res, next) {
 
     let todayUsers = await User.find({
         created_at: {
+            $lt: new Date(),
             $gt: moment().startOf('day').format()
         }
     });

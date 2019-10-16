@@ -5,10 +5,6 @@ const botService = require('./../services/bot');
 const token = process.env.BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
-
-
-
-
 bot.on("message", async function(msg){
 	const chatId = msg.chat.id;
 
