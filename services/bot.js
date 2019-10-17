@@ -135,8 +135,8 @@ exports.selectMovie = async (bot, msg, chatId) => {
 
     let movie = await Movie.findOneAndUpdate({
         name: {
-            $regex:movieName,
-            $options:"i"
+            $regex: movieName,
+            $options: "i"
         }
     }, {
         $inc: {
@@ -151,13 +151,13 @@ exports.selectMovie = async (bot, msg, chatId) => {
     });
 
 
-    if(movie === null){
-        bot.sendMessage(chatId , "خطا در دریافت اطلاعات،با پشتیبانی تماس بگیرین😫");
+    if (movie === null) {
+        bot.sendMessage(chatId, "خطا در دریافت اطلاعات،با پشتیبانی تماس بگیرین😫");
         return false;
     }
 
     let cover = movie.cover;
-    if (cover === null) {
+    if (cover === null || cover === undefined) {
         //get cover from api
         try {
             let movieSearches = await helper.searchMovieDB(movieName.replace(movie.year, ''));
@@ -168,6 +168,9 @@ exports.selectMovie = async (bot, msg, chatId) => {
                 name: movieName
             }, {
                 cover: cover
+            }, {
+                upsert: true,
+                setDefaultsOnInsert: true
             })
         } catch (e) {
             console.log(e)
@@ -278,12 +281,12 @@ exports.linkSelect = async function (bot, msg, chatId) {
 
 
     let links = movie.link.filter(lin => {
-        
-        if(lin.censored === undefined){
+
+        if (lin.censored === undefined) {
             lin.censored = false;
         }
-        
-        if(lin.dubbed === undefined){
+
+        if (lin.dubbed === undefined) {
             lin.dubbed = false;
         }
 
