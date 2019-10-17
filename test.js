@@ -1,7 +1,14 @@
 let fs = require('fs')
 
-
-let data = fs.readFileSync('./crawler/film.json');
+//aurares
+//batches
+//film2serial
+//ma_collection
+//new_stuff
+//shahrdl4
+//shahrdl11
+//collection
+let data = fs.readFileSync('./bin/collection.json');
 
 console.log(JSON.parse(data).length)
 let films = JSON.parse(data);
@@ -28,21 +35,15 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", async function callback() {
   console.log("connected to com_watch database");
 
-    // asyncForEach(films , async film => {
-    //         // console.log('before')
+    asyncForEach(films , async film => {
+            console.log('before')
         
-    //         await movieController.create(film)
+            await movieController.create(film)
         
-    //         // console.log('after')
-    // } )
+            console.log('after')
+    } )
 
-    await films.map(async film => {
-        // console.log('before')
-
-        await movieController.create(film)
-
-        // console.log('after')
-    });
+    
 
 
 //   crawl();
