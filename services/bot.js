@@ -32,7 +32,7 @@ const canUseBot = async function (bot, user, chatId) {
                     resolve(false)
                 }
                 resolve(true)
-            }).catch(e=>{
+            }).catch(e => {
                 console.log(e)
             })
         } else {
@@ -165,17 +165,19 @@ exports.selectMovie = async (bot, msg, chatId) => {
         //get cover from api
         try {
             let movieSearches = await helper.searchMovieDB(movieName.replace(movie.year, ''));
-            cover = movieSearches.results.length > 0 ? movieSearches.results[0].poster_path : null;
-            cover = "https://image.tmdb.org/t/p/original" + cover;
-            movie.cover = cover;
-            await Movie.findOneAndUpdate({
-                name: movieName
-            }, {
-                cover: cover
-            }, {
-                upsert: true,
-                setDefaultsOnInsert: true
-            })
+            if (movieSearches.results.length > 0) {
+                cover = movieSearches.results[0].poster_path;
+                cover = "https://image.tmdb.org/t/p/original" + cover;
+                movie.cover = cover;
+                await Movie.findOneAndUpdate({
+                    name: movieName
+                }, {
+                    cover: cover
+                }, {
+                    upsert: true,
+                    setDefaultsOnInsert: true
+                })
+            }
         } catch (e) {
             console.log(e)
         }
@@ -184,14 +186,19 @@ exports.selectMovie = async (bot, msg, chatId) => {
 
 
     if (movie.link.length <= 2) {
-        await bot.sendMessage(chatId, "به همین راحتی میتونی فیلم مورد علاقت رو دانلود کنی،بهتر از اینم مگه میشه؟😍");
+
+
+        let searchDone = await Log.find({
+            user: user._id,
+            type: "done"
+        }).count();
 
 
         let caption = `${movieName}\n`;
 
 
         movie.link.forEach(li => {
-            caption += `📎 لینک دانلود: <a href="${li.link}">${(li.quality || "") + (li.release || "")}  ${li.size || ""} ${li.dubbed ? "Dubbed" : ""} ${li.censored ? "Censored" : ""}</a>\n`
+            caption += `📎 لینک دانلود: <a href="${li.link}">دانلود ${(li.quality || "") + (li.release || "")}  ${li.size || ""} ${li.dubbed ? "Dubbed" : ""} ${li.censored ? "Censored" : ""}</a>\n`
         })
 
 
@@ -210,7 +217,17 @@ exports.selectMovie = async (bot, msg, chatId) => {
                 parse_mode: "HTML"
             });
 
-            bot.sendMessage(chatId, "نظرت چیه مارو به دوستات معرفی کنی تا ما هم انگیزه بگیریم و ربات رو کامل و کامل تر کنیم؟🤔");
+            
+            if (searchDone % 5 === 0) {
+                await bot.sendMessage(chatId, "به همین راحتی میتونی فیلم مورد علاقت رو دانلود کنی،بهتر از اینم مگه میشه؟😍");
+                await bot.sendMessage(chatId, "اگر راضی بودی کامواچ رو به دوستات معرفی کن تا اونا هم بتونن تو سریع ترین زمان ممکن فیلم ببینن 😍");
+            }
+        
+        
+            if(searchDone % 6 === 0){
+                await bot.sendMessage(chatId, "در صورت کار نکردن لینک  دانلود , لینک های دیگر را امتحان کنید یا به ادمین اطلاع دهید");
+            }
+            // bot.sendMessage(chatId, "نظرت چیه مارو به دوستات معرفی کنی تا ما هم انگیزه بگیریم و ربات رو کامل و کامل تر کنیم؟🤔");
             return true;
         }
 
@@ -220,7 +237,17 @@ exports.selectMovie = async (bot, msg, chatId) => {
             parse_mode: "HTML"
         });
 
-        bot.sendMessage(chatId, "نظرت چیه مارو به دوستات معرفی کنی تا ما هم انگیزه بگیریم و ربات رو کامل و کامل تر کنیم؟🤔");
+        
+        if (searchDone % 5 === 0) {
+            await bot.sendMessage(chatId, "به همین راحتی میتونی فیلم مورد علاقت رو دانلود کنی،بهتر از اینم مگه میشه؟😍");
+            await bot.sendMessage(chatId, "اگر راضی بودی کامواچ رو به دوستات معرفی کن تا اونا هم بتونن تو سریع ترین زمان ممکن فیلم ببینن 😍");
+        }
+    
+    
+        if(searchDone % 6 === 0){
+            await bot.sendMessage(chatId, "در صورت کار نکردن لینک  دانلود , لینک های دیگر را امتحان کنید یا به ادمین اطلاع دهید");
+        }
+        // bot.sendMessage(chatId, "نظرت چیه مارو به دوستات معرفی کنی تا ما هم انگیزه بگیریم و ربات رو کامل و کامل تر کنیم؟🤔");
 
 
 
@@ -311,9 +338,14 @@ exports.linkSelect = async function (bot, msg, chatId) {
 
 
 
-    bot.sendMessage(chatId, "به همین راحتی میتونی لینک دانلودت آماده شد،بهتر از اینم مگه میشه؟😍");
+    let searchDone = await Log.find({
+        user: user._id,
+        type: "done"
+    }).count();
 
-    let caption = `${movieName}\n📎 لینک دانلود: <a href="${links[0].link}">${(links[0].quality || "")  + (links[0].release || "")}  ${links[0].size || ""} ${links[0].dubbed ? 'Dubbed' : ''} ${links[0].censored ? 'Censored' : ''}</a>\nربات دانلود رایگان مستقیم فیلم\n@comewatch_bot`;
+    
+
+    let caption = `${movieName}\n📎 لینک دانلود: <a href="${links[0].link}">دانلود ${(links[0].quality || "")  + (links[0].release || "")}  ${links[0].size || ""} ${links[0].dubbed ? 'Dubbed' : ''} ${links[0].censored ? 'Censored' : ''}</a>\nربات دانلود رایگان مستقیم فیلم\n@comewatch_bot`;
 
 
 
@@ -329,8 +361,17 @@ exports.linkSelect = async function (bot, msg, chatId) {
             parse_mode: "HTML"
         });
 
+        if (searchDone % 5 === 0) {
+            await bot.sendMessage(chatId, "به همین راحتی میتونی فیلم مورد علاقت رو دانلود کنی،بهتر از اینم مگه میشه؟😍");
+            await bot.sendMessage(chatId, "اگر راضی بودی کامواچ رو به دوستات معرفی کن تا اونا هم بتونن تو سریع ترین زمان ممکن فیلم ببینن 😍");
+        }
+    
+    
+        if(searchDone % 6 === 0){
+            await bot.sendMessage(chatId, "در صورت کار نکردن لینک  دانلود , لینک های دیگر را امتحان کنید یا به ادمین اطلاع دهید");
+        }
 
-        bot.sendMessage(chatId, "نظرت چیه مارو به دوستات معرفی کنی تا ما هم انگیزه بگیریم و ربات رو کامل و کامل تر کنیم؟🤔");
+        // bot.sendMessage(chatId, "نظرت چیه مارو به دوستات معرفی کنی تا ما هم انگیزه بگیریم و ربات رو کامل و کامل تر کنیم؟🤔");
         return false;
     }
 
@@ -340,7 +381,17 @@ exports.linkSelect = async function (bot, msg, chatId) {
         parse_mode: "HTML"
     });
 
-    bot.sendMessage(chatId, "نظرت چیه مارو به دوستات معرفی کنی تا ما هم انگیزه بگیریم و ربات رو کامل و کامل تر کنیم؟🤔");
+    if (searchDone % 5 === 0) {
+        await bot.sendMessage(chatId, "به همین راحتی میتونی فیلم مورد علاقت رو دانلود کنی،بهتر از اینم مگه میشه؟😍");
+        await bot.sendMessage(chatId, "اگر راضی بودی کامواچ رو به دوستات معرفی کن تا اونا هم بتونن تو سریع ترین زمان ممکن فیلم ببینن 😍");
+    }
+
+
+    if(searchDone % 6 === 0){
+        await bot.sendMessage(chatId, "در صورت کار نکردن لینک  دانلود , لینک های دیگر را امتحان کنید یا به ادمین اطلاع دهید");
+    }
+
+    // bot.sendMessage(chatId, "نظرت چیه مارو به دوستات معرفی کنی تا ما هم انگیزه بگیریم و ربات رو کامل و کامل تر کنیم؟🤔");
 }
 
 
