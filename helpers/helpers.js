@@ -22,7 +22,7 @@ const helpers = {
     isValidExt(name) {
         let ext = this.getMovieExt(name);
 
-        return ['mkv', 'mp4', 'avi', 'mov', 'wmv','flv'].includes(ext);
+        return ['mkv', 'mp4', 'avi', 'mov', 'wmv', 'flv', 'mka'].includes(ext);
 
     },
 
@@ -55,46 +55,46 @@ const helpers = {
         const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10)
         if (i === 0) return `${bytes} ${sizes[i]})`
         return `${(bytes / (1024 ** i)).toFixed(1)} ${sizes[i]}`
-     },
-     isDubbed(name){
-         return name.includes('Dubbed') || 
-         name.includes('dubbed') ||
-         name.includes('Dub') ||
-         name.includes('Duble')||
-         name.includes('DUBBED')
-     },
-     isSansored(name){
-         return name.includes('sansor') || 
-         name.includes('censored') ||
-         name.includes('Sansor')
-     },
-     getQuality(link){
-        let qualities = ['720p' , '1080p' , '480p','DVDRip']
+    },
+    isDubbed(name) {
+        return name.includes('Dubbed') ||
+            name.includes('dubbed') ||
+            name.includes('Dub') ||
+            name.includes('Duble') ||
+            name.includes('DUBBED')
+    },
+    isSansored(name) {
+        return name.includes('sansor') ||
+            name.includes('censored') ||
+            name.includes('Sansor')
+    },
+    getQuality(link) {
+        let qualities = ['720p', '1080p', '480p', 'DVDRip', '720', '480', '1080', 'fullHD', 'hdcam', 'HDCAM', 'HD-CAM', 'hd-cam']
 
         let q = null;
-        qualities.forEach(quality=>{
-            if(q !== null){
+        qualities.forEach(quality => {
+            if (q !== null) {
                 return false;
             }
 
-            if(link.includes(quality)){
+            if (link.includes(quality)) {
                 q = quality;
-            } 
+            }
         })
 
-        if(link.includes('3D')){
+        if (link.includes('3D')) {
             q += " " + "3D"
         }
 
-        if(link.includes('x265')){
+        if (link.includes('x265')) {
             q += " " + "x265"
         }
-      
-      
+
+
 
         return q;
-     },
-     getRelease(link){
+    },
+    getRelease(link) {
         let releases = [
             'Bluray',
             'BLURAY',
@@ -105,16 +105,21 @@ const helpers = {
             'DivX',
             'DVBRip',
             'WEB DL',
-            'WEBRip ',
+            'WEBRip',
             'WEB Rip',
-            'HC',   
+            'BRRip',
+            'HC',
             'BluRay',
             'WEB-DL',
-            'WebDL ',
+            'WebDL',
             'webdl',
             'web-dl',
             'HEVC',
             'DVDRip',
+            'hdcam',
+            'HDCAM',
+            'HD-CAM',
+            'hd-cam',
             'hevc',
             'HDCam',
             'hdcam',
@@ -129,22 +134,22 @@ const helpers = {
         ]
 
         let r = null;
-        releases.forEach(release=>{
-            if(r !== null){
+        releases.forEach(release => {
+            if (r !== null) {
                 return false;
             }
 
-            if(link.includes(release)){
+            if (link.includes(release)) {
                 r = release;
-            } 
+            }
         })
 
         return r;
-     },
+    },
 
-     async asyncForEach(array, callback) {
+    async asyncForEach(array, callback) {
         for (let index = 0; index < array.length; index++) {
-          await callback(array[index], index, array);
+            await callback(array[index], index, array);
         }
     },
     searchMovieDB(name){

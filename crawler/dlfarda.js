@@ -4,7 +4,7 @@ const rp = require('request-promise');
 
 const fs = require('fs');
 
-let moviesLinkPage = 'http://dl.fmdl.info/Movie/2015/';
+let moviesLinkPage = 'http://dl.fmdl.info/Movie/2015/';//inam bastan khar kose ha 
 let results = [];
 rp(moviesLinkPage).then(htmlString => {
     let $ = cheerio.load(htmlString);
