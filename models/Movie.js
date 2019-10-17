@@ -10,6 +10,7 @@ var MovieSchema =new mongoose.Schema({
     imdb:String,
     cover:String,
     description:String,
+    views:{type:Number,default:0},
     link:[{type:Object}],
     report:[String]
 })

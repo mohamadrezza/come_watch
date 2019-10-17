@@ -1,25 +1,24 @@
 var User = require('../models/User')
 
-exports.create = async (req, res) => {
+exports.findOrCreate = async (userObj) => {
     try {
-        var msg = {
-            first_name: 'mammad',
-            last_name: 'shabooni',
-            data: 'some stuff'
-        }
-       var user =await User.findOne({tel_id:'5454854'})
-       if(!user){
-        await User.create({
-            first_name: msg.first_name,
-            last_name: msg.last_name,
-            tel_id: 5454854
+
+        var user = await User.findOne({
+            chat_id: userObj.id
         })
-        console.log('user created')
-       } 
-      res.send('done')
+        if (!user) {
+            user = await User.create({
+                first_name: userObj.first_name,
+                last_name: userObj.last_name,
+                username: userObj.username,
+                chat_id: userObj.id,
+            })
+            return user;
+        }
+        return user;
     } catch (e) {
         console.log(e)
-        res.status(500).send(e)
+        return null;
     }
 
 }

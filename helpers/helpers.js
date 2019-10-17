@@ -129,7 +129,8 @@ const helpers = {
             'Remux',
             'HDTV',
             'hdtv',
-            'BrRip'
+            'BrRip',
+            'HDCAM'
         ]
 
         let r = null;
@@ -150,6 +151,20 @@ const helpers = {
         for (let index = 0; index < array.length; index++) {
             await callback(array[index], index, array);
         }
+    },
+    searchMovieDB(name){
+        const MovieDB = require('moviedb')('6f0c625e9b7f81e80f475be102f64bfc');
+        return new Promise((resolve, reject) => {
+            MovieDB.searchMovie({
+                query: name
+            }, (err, res) => {
+                resolve(res);
+            });
+        })
+    },
+    getSize(link){
+        link = link.match(/([0-9]+( |.[0-9]+)(mb|gb|kb|Bytes))/i)
+        return link && link.length>= 1 ? link[0] : null;
     }
 };
 
