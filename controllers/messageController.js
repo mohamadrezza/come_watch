@@ -23,6 +23,10 @@ bot.on("message", async function(msg){
 		return true;
 	}
 
+	if(/[\u0600-\u06FF]/.test(msg.text)){
+		botService.arabicInput(bot , msg , chatId);
+		return false;
+	}
 
 
 	botService.searchMovie(bot , msg , chatId);

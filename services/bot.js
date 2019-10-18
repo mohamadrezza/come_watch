@@ -27,11 +27,15 @@ const canUseBot = async function (bot, user, chatId) {
     return new Promise(async (resolve) => {
 
         if (searchDone > 1) {
-            bot.getChatMember(process.env.CHANNEL_USERNAME, chatId).then(res => {
-                if (res.status === 'left') {
-                    resolve(false)
+            bot.getChatMember(process.env.CHANNEL_USERNAME, chatId).then(async (res) => {
+                if (['member', 'administrator' , 'creator'].includes(res.status)) {
+                    resolve(true)
                 }
-                resolve(true)
+                await Log.create({
+                    type: "must_join_channel",
+                    user: user._id
+                })
+                resolve(false)
             }).catch(e => {
                 console.log(e)
             })
@@ -84,7 +88,7 @@ exports.searchMovie = async (bot, msg, chatId) => {
         });
 
         if (movies.length === 0) {
-            Log.create({
+            await Log.create({
                 value: msg.text,
                 type: "no_result_search",
                 user: user._id
@@ -185,7 +189,7 @@ exports.selectMovie = async (bot, msg, chatId) => {
 
 
 
-    if (movie.link.length <= 2) {
+    if (movie.link.length <= 4) {
 
 
         let searchDone = await Log.find({
@@ -198,14 +202,14 @@ exports.selectMovie = async (bot, msg, chatId) => {
 
 
         movie.link.forEach(li => {
-            caption += `📎 لینک دانلود: <a href="${li.link}">دانلود ${(li.quality || "") + (li.release || "")}  ${li.size || ""} ${li.dubbed ? "Dubbed" : ""} ${li.censored ? "Censored" : ""}</a>\n`
+            caption += `📎 لینک دانلود: <a href="${li.link}">دانلود ${(li.quality || "") + " "+ (li.release || "")}  ${li.size || ""} ${li.dubbed ? "Dubbed" : ""} ${li.censored ? "Censored" : ""}</a>\n`
         })
 
 
         caption += `ربات دانلود رایگان مستقیم فیلم\n@comewatch_bot`;
 
 
-        Log.create({
+        await Log.create({
             value: movieName,
             type: "done",
             user: user._id
@@ -217,14 +221,14 @@ exports.selectMovie = async (bot, msg, chatId) => {
                 parse_mode: "HTML"
             });
 
-            
+
             if (searchDone % 5 === 0) {
                 await bot.sendMessage(chatId, "به همین راحتی میتونی فیلم مورد علاقت رو دانلود کنی،بهتر از اینم مگه میشه؟😍");
                 await bot.sendMessage(chatId, "اگر راضی بودی کامواچ رو به دوستات معرفی کن تا اونا هم بتونن تو سریع ترین زمان ممکن فیلم ببینن 😍");
             }
-        
-        
-            if(searchDone % 6 === 0){
+
+
+            if (searchDone % 6 === 0) {
                 await bot.sendMessage(chatId, "در صورت کار نکردن لینک  دانلود , لینک های دیگر را امتحان کنید یا به ادمین اطلاع دهید");
             }
             // bot.sendMessage(chatId, "نظرت چیه مارو به دوستات معرفی کنی تا ما هم انگیزه بگیریم و ربات رو کامل و کامل تر کنیم؟🤔");
@@ -237,14 +241,14 @@ exports.selectMovie = async (bot, msg, chatId) => {
             parse_mode: "HTML"
         });
 
-        
+
         if (searchDone % 5 === 0) {
             await bot.sendMessage(chatId, "به همین راحتی میتونی فیلم مورد علاقت رو دانلود کنی،بهتر از اینم مگه میشه؟😍");
             await bot.sendMessage(chatId, "اگر راضی بودی کامواچ رو به دوستات معرفی کن تا اونا هم بتونن تو سریع ترین زمان ممکن فیلم ببینن 😍");
         }
-    
-    
-        if(searchDone % 6 === 0){
+
+
+        if (searchDone % 6 === 0) {
             await bot.sendMessage(chatId, "در صورت کار نکردن لینک  دانلود , لینک های دیگر را امتحان کنید یا به ادمین اطلاع دهید");
         }
         // bot.sendMessage(chatId, "نظرت چیه مارو به دوستات معرفی کنی تا ما هم انگیزه بگیریم و ربات رو کامل و کامل تر کنیم؟🤔");
@@ -310,7 +314,7 @@ exports.linkSelect = async function (bot, msg, chatId) {
     let dubbed = helper.isDubbed(linkName);
     let censored = helper.isSansored(linkName);
 
-
+    // console.log(movie);
     let links = movie.link.filter(lin => {
 
         if (lin.censored === undefined) {
@@ -321,6 +325,22 @@ exports.linkSelect = async function (bot, msg, chatId) {
             lin.dubbed = false;
         }
 
+        // if(lin.quality !== quality){
+        //     console.log('quality error=> ' , lin.quality , quality)
+        //     return false;
+        // }
+
+        // if(lin.release !== release){
+        //     console.log('release error=> ' , lin.release , release)
+        //     return false;
+        // }
+
+        // if(lin.size !== size){
+        //     console.log('size error=> ' , lin.size , size)
+        //     return false;
+        // }
+
+        // console.log('passed=> ', lin);
         return lin.quality == quality &&
             lin.release == release &&
             lin.size == size &&
@@ -330,8 +350,12 @@ exports.linkSelect = async function (bot, msg, chatId) {
 
 
     if (links.length === 0) {
-        bot.sendMessage(chatId, "دریافت لینک با خطا روبرو شد با پشتیبانی تماس بگیرین😫");
-        return false;
+        if (movie.link.length === 0) {
+            bot.sendMessage(chatId, "دریافت لینک با خطا روبرو شد با پشتیبانی تماس بگیرین😫");
+            return false;
+        } else {
+            links = movie.link;
+        }
     }
 
 
@@ -343,14 +367,21 @@ exports.linkSelect = async function (bot, msg, chatId) {
         type: "done"
     }).count();
 
-    
-
-    let caption = `${movieName}\n📎 لینک دانلود: <a href="${links[0].link}">دانلود ${(links[0].quality || "")  + (links[0].release || "")}  ${links[0].size || ""} ${links[0].dubbed ? 'Dubbed' : ''} ${links[0].censored ? 'Censored' : ''}</a>\nربات دانلود رایگان مستقیم فیلم\n@comewatch_bot`;
 
 
+    let caption = `${movieName}\n`;
 
 
-    Log.create({
+    movie.link.forEach(li => {
+        caption += `📎 لینک دانلود: <a href="${li.link}">دانلود ${(li.quality || "") + " " + (li.release || "")}  ${li.size || ""} ${li.dubbed ? "Dubbed" : ""} ${li.censored ? "Censored" : ""}</a>\n`
+    })
+
+
+    caption += `ربات دانلود رایگان مستقیم فیلم\n@comewatch_bot`;
+
+
+
+    await Log.create({
         value: movieName,
         type: "done",
         user: user._id
@@ -365,9 +396,9 @@ exports.linkSelect = async function (bot, msg, chatId) {
             await bot.sendMessage(chatId, "به همین راحتی میتونی فیلم مورد علاقت رو دانلود کنی،بهتر از اینم مگه میشه؟😍");
             await bot.sendMessage(chatId, "اگر راضی بودی کامواچ رو به دوستات معرفی کن تا اونا هم بتونن تو سریع ترین زمان ممکن فیلم ببینن 😍");
         }
-    
-    
-        if(searchDone % 6 === 0){
+
+
+        if (searchDone % 6 === 0) {
             await bot.sendMessage(chatId, "در صورت کار نکردن لینک  دانلود , لینک های دیگر را امتحان کنید یا به ادمین اطلاع دهید");
         }
 
@@ -387,7 +418,7 @@ exports.linkSelect = async function (bot, msg, chatId) {
     }
 
 
-    if(searchDone % 6 === 0){
+    if (searchDone % 6 === 0) {
         await bot.sendMessage(chatId, "در صورت کار نکردن لینک  دانلود , لینک های دیگر را امتحان کنید یا به ادمین اطلاع دهید");
     }
 
@@ -401,4 +432,13 @@ exports.welcome = async function (bot, msg, chatId) {
         chatId,
         `👋 سلام ${msg.from.first_name}\nبه ربات کامواچ خوش اومدی🎉\nمیتونی بین 20 هزارتا فیلم موجود در ربات جستجو کنی و ازش رایگان استفاده کنی🤩🤩\nفعلا فقط فیلم داریم و به زودی سریال ها و یه عالمه امکانات دیگه رو هم اضافه میکنیم😎\nاسم فیلم موردنظرت رو بنویس تا لینکش رو برات بفرستیم...`
     );
+}
+
+
+exports.arabicInput = async function (bot, msg, chatId) {
+    await Log.create({
+        value: msg.text,
+        type: "persian_search",
+    })
+    bot.sendMessage(chatId, "⚠لطفا از حروف فارسی استفاده نکنید\nربات فقط دارای آرشیو فیلم خارجی می باشد\nبرای جستجو نام فیلم را به انگلیسی وارد کنید برای مثال: Fight Club")
 }
