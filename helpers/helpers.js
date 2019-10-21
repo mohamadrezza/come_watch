@@ -174,6 +174,15 @@ const helpers = {
     generateCaption(movie, links) {
         let caption = `${movie.name}\n`;
 
+        if (movie.imdb !== null && movie.imdb !== undefined) {
+            caption += ` ⭐IMDB: ${movie.imdb}\n`;
+        }
+
+        if (movie.description !== null && movie.description !== undefined) {
+            caption += '\n';
+            caption += ` ✍خلاصه داستان: ${movie.description}\n\n`;
+        }
+
 
         links.forEach(li => {
             caption += `📎 لینک دانلود: <a href="${li.link}">دانلود ${(li.quality || "") + " " + (li.release || "")}  ${li.size || ""} ${li.dubbed ? "Dubbed" : ""} ${li.censored ? "Censored" : ""}</a>\n`

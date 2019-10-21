@@ -356,6 +356,16 @@ exports.selectSeason = async function (bot, msg, chatId) {
 
     let caption = "🔥" + movie.name + " Season " + seasonNumber + "\n";
 
+    if (movie.imdb !== null && movie.imdb !== undefined) {
+        caption += ` ⭐IMDB: ${movie.imdb}\n`;
+    }
+
+    if (movie.description !== null && movie.description !== undefined) {
+        caption += '\n';
+        caption += ` ✍خلاصه داستان: ${movie.description}\n\n`;
+    }
+
+
     _.forEach(episodes, (item, key) => {
         caption += `E${key}: `;
 
