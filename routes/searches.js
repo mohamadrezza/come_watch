@@ -23,8 +23,7 @@ router.get('/', async function (req, res, next) {
             created_at: {
                 $gt: moment().startOf('day')
             }
-        }).limit(30)
-        .select(['value']);
+        }).select(['value']);
 
 
     mostViewsMoviesToday = await _.chain(mostViewsMoviesToday)
