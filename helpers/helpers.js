@@ -41,6 +41,12 @@ const helpers = {
             .replace('.mp4', '')
             .replace('.mkv', '')
             .replace('.avi', '')
+            .replace('%27','')
+            .replace('%20','')
+            .replace('%29','')
+            .replace('%30','')
+            .replace('%28','')
+
             .replace(/\./g, ' ')
             .replace(/_/g, ' ')
             .replace(/\(/g, ' ')
@@ -107,6 +113,7 @@ const helpers = {
             'WEB DL',
             'WEBRip',
             'WEB Rip',
+            'HDRip XViD',
             'BRRip',
             'HC',
             'BluRay',
@@ -130,6 +137,7 @@ const helpers = {
             'HDTV',
             'hdtv',
             'BrRip',
+            'BRrip',
             'HDCAM'
         ]
 
@@ -152,7 +160,7 @@ const helpers = {
             await callback(array[index], index, array);
         }
     },
-    searchMovieDB(name){
+    searchMovieDB(name) {
         const MovieDB = require('moviedb')('6f0c625e9b7f81e80f475be102f64bfc');
         return new Promise((resolve, reject) => {
             MovieDB.searchMovie({
@@ -162,9 +170,9 @@ const helpers = {
             });
         })
     },
-    getSize(link){
+    getSize(link) {
         link = link.match(/([0-9]+( |.[0-9]+)(mb|gb|kb|Bytes))/i)
-        return link && link.length>= 1 ? link[0] : null;
+        return link && link.length >= 1 ? link[0] : null;
     }
 };
 

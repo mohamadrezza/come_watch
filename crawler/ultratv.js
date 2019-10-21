@@ -1,7 +1,7 @@
 var cheerio = require('cheerio')
 var helper = require('../helpers/helpers')
 var rp = require('request-promise')
-var source = 'http://moviebuzz.one/Data/Movies/Hollywood/'
+// var source = 'http://moviebuzz.one/Data/Movies/Hollywood/'
 var fs = require('fs')
 //done 
 

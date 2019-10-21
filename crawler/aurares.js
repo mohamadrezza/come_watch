@@ -1,44 +1,54 @@
+// var request = require ('request')
 var cheerio = require('cheerio')
-var fs = require('fs')
-var rp = require('request-promise')
-var source = 'http://aurares.potato.moe/vrc/'
-var helper = require ('../helpers/helpers')
-//done
-async function crawl() {
-    try {
-        var page = await rp(source)
-        var $ = cheerio.load(page)
-        $('a').each(async item => {
-            try {
-                var movie = $('a').eq(item).text()
-                if(movie!='../'){
-                    var name=helper.parseMovieName(movie)
-                    var link = source+movie
-                    var file =await rp.head(link)
-                    var quality=helper.getQuality(link)
-                    if(quality==null){
-                        quality='720'
-                    }
-                    var result = {
-                        name:name,
-                        link:{
-                            quality:quality+'p',
-                            link:link,
-                            size:helper.bytesToSize(file['content-length']),
-                            dubbed:false,
-                            censored:false
-                        }
+var request = require('request')
+var helper = require('../helpers/helpers')
+var source = 'http://moviebuzz.one/Data/Movies/Hollywood/'
+var fs = require ('fs')
+function crawl() {
+    request.get(source, (err, response, body) => {
+        if (err) {
+            console.log(err)
+        }
+        var $ = cheerio.load(body)
+        $('a').each(item => {
+            var page = $('a').eq(item).text()
+            if (page !== '../') {
+                var movieParent = source + page
 
-                    }
-                    fs.appendFileSync('../bin/aurares.json',JSON.stringify(result)+',')
-                }
-            } catch (e) {
-                console.log(e.message)
+                request.get(movieParent, (err, response, body) => {
+                    var pageData = cheerio.load(body)
+                    pageData('a').each(i => {
+                        var movie = pageData('a').eq(i).attr('href')
+                        if (movie !== '../') {
+                            if (helper.isValidExt(movie)) {
+                                var dlLink = movieParent + movie
+                                var year = helper.getYearFromMovieName(movie)
+                                var name = helper.parseMovieName(movie, year)
+                                var quality = helper.getQuality(movie)
+                                var release = helper.getRelease(movie)
+                                var result = {
+                                    name: decodeURI(name),
+                                    year: year,
+                                    link: {
+                                        link: dlLink,
+                                        quality: quality,
+                                        release: release,
+                                        dubbed: helper.isDubbed(movie),
+                                        censored: helper.isSansored(movie)
+                                    }
+                                }
+                                fs.appendFileSync('../bin/dhakaftp.json',JSON.stringify(result)+',')
+                            }
+                        }
+                    })
+                })
+
+
+
             }
+
         })
-    } catch (e) {
-        console.log(e.message)
-    }
+    })
 
 }
 

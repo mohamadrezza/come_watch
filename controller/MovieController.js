@@ -26,6 +26,7 @@ exports.create = async function(movieObj){
       var movie = await Movie.create({
         name: movieObj.name,
         link: movieObj.link,
+        type:movieObj.type,
         year: movieObj.year || null,
         cover: movieObj.cover || null,
         imdb: movieObj.imdb || null,
