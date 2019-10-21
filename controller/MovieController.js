@@ -41,15 +41,15 @@ exports.create = async function(movieObj){
     console.log(e);
   }
 };
-exports.find = async (req, res) => {
+exports.find = async (input) => {
   try {
     //look for movie which contains "input"
-    var movie = await queryHelper.findByName(Movie, "input");
+    var movie = await queryHelper.findByName(Movie, input);
     if (movie.length == 0) {
       return res.status(404).send("sorry movie not found");
     } else {
       //for test
-      res.send(movie);
+      console.table(movie)
     }
     console.log("find ...?");
   } catch (e) {

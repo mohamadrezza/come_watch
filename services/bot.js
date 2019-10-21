@@ -32,7 +32,7 @@ const canUseBot = async function (bot, user, chatId) {
                     resolve(false)
                 }
                 resolve(true)
-            }).catch(e=>{
+            }).catch(e => {
                 console.log(e)
             })
         } else {
@@ -46,7 +46,10 @@ const canUseBot = async function (bot, user, chatId) {
 exports.searchMovie = async (bot, msg, chatId) => {
 
     try {
-
+        //if string includes / delete it 
+        if (msg.text.includes('/')) {
+            msg.text = msg.text.replace('/', '')
+        }
 
         bot.sendMessage(chatId, `🔎درحال جستجو : ${msg.text}`);
 
@@ -139,8 +142,8 @@ exports.selectMovie = async (bot, msg, chatId) => {
 
     let movie = await Movie.findOneAndUpdate({
         name: {
-            $regex:movieName,
-            $options:"i"
+            $regex: movieName,
+            $options: "i"
         }
     }, {
         $inc: {
@@ -155,8 +158,8 @@ exports.selectMovie = async (bot, msg, chatId) => {
     });
 
 
-    if(movie === null){
-        bot.sendMessage(chatId , "خطا در دریافت اطلاعات،با پشتیبانی تماس بگیرین😫");
+    if (movie === null) {
+        bot.sendMessage(chatId, "خطا در دریافت اطلاعات،با پشتیبانی تماس بگیرین😫");
         return false;
     }
 
@@ -282,12 +285,12 @@ exports.linkSelect = async function (bot, msg, chatId) {
 
 
     let links = movie.link.filter(lin => {
-        
-        if(lin.censored === undefined){
+
+        if (lin.censored === undefined) {
             lin.censored = false;
         }
-        
-        if(lin.dubbed === undefined){
+
+        if (lin.dubbed === undefined) {
             lin.dubbed = false;
         }
 
