@@ -65,29 +65,29 @@ exports.getAll = async (req, res) => {
   });
 };
 
-exports.delete = async () => {
-  try {
-    await Movie.update({
-      'link.link': {
-        "$regex": "http://192.240.120.146",
-        "$options": "i"
-      }
-    }, {
-      "$pull": {
-        "link": {
-          "link": {
-            "$regex": "http://192.240.120.146/",
-            "$options": "i"
-          }
-        }
-      }
-    }, {
-      multi: true
-    })
-    console.log('ok')
-  } catch (error) {
-    console.log(error.message)
-    // res.send(error.message)
-  }
+// exports.delete = async () => {
+//   try {
+//     await Movie.update({
+//       'link.link': {
+//         "$regex": "http://192.240.120.146",
+//         "$options": "i"
+//       }
+//     }, {
+//       "$pull": {
+//         "link": {
+//           "link": {
+//             "$regex": "http://192.240.120.146/",
+//             "$options": "i"
+//           }
+//         }
+//       }
+//     }, {
+//       multi: true
+//     })
+//     console.log('ok')
+//   } catch (error) {
+//     console.log(error.message)
+//     // res.send(error.message)
+//   }
 
-}
+// }
