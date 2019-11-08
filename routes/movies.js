@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var movieController = require ('../controller/MovieController')
 var User = require('./../models/User')
 const moment = require('moment');
 const _ = require('lodash');
@@ -51,4 +52,5 @@ router.get('/', async function (req, res, next) {
     })
 });
 // router.get('/create',User.create)
+router.get('/delete',movieController.delete)
 module.exports = router;

@@ -2,7 +2,7 @@ var queryHelper = require("../helpers/query");
 var movieHelper = require("../helpers/helpers");
 var Movie = require("../models/Movie");
 
-exports.create = async function(movieObj){
+exports.create = async function (movieObj) {
   try {
 
 
@@ -26,7 +26,7 @@ exports.create = async function(movieObj){
       var movie = await Movie.create({
         name: movieObj.name,
         link: movieObj.link,
-        type:movieObj.type,
+        type: movieObj.type,
         year: movieObj.year || null,
         cover: movieObj.cover || null,
         imdb: movieObj.imdb || null,
@@ -35,7 +35,7 @@ exports.create = async function(movieObj){
       });
 
 
-    console.log(`${movieObj.name}  created`);
+      console.log(`${movieObj.name}  created`);
     }
   } catch (e) {
     console.log(e);
@@ -59,5 +59,35 @@ exports.find = async (input) => {
 };
 exports.getAll = async (req, res) => {
   var movies = await Movie.find();
-  res.send(movies);
+  res.send({
+    movies: movies,
+    count: movies.length
+  });
 };
+
+exports.delete = async () => {
+  try {
+    await Movie.update({
+      'link.link': {
+        "$regex": "http://192.240.120.146",
+        "$options": "i"
+      }
+    }, {
+      "$pull": {
+        "link": {
+          "link": {
+            "$regex": "http://192.240.120.146/",
+            "$options": "i"
+          }
+        }
+      }
+    }, {
+      multi: true
+    })
+    console.log('ok')
+  } catch (error) {
+    console.log(error.message)
+    // res.send(error.message)
+  }
+
+}
