@@ -18,7 +18,9 @@ var app = express();
 app.use(cors());
 // app.use(logger("dev"));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({
+    extended: true
+}));
 
 
 let searchesRouter = require('./routes/searches');
@@ -33,7 +35,9 @@ app.use("/movies", moviesRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     res.status(404);
-    res.json({ok: false})
+    res.json({
+        ok: false
+    })
 });
 // error handler
 app.use(function (err, req, res, next) {
@@ -43,7 +47,10 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.json({stauts: 500, error: err.message});
+    res.json({
+        stauts: 500,
+        error: err.message
+    });
 });
 mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.MONGO_DB}`, {
     useNewUrlParser: true,
@@ -59,4 +66,15 @@ db.once("open", function callback() {
         console.log("server is running: ", new Date().toTimeString())
     );
 });
+
+
+
+const cron = require("node-cron");
+const cronService = require("./services/cron")
+cron.schedule("0 */15 * * * *", function () {
+// cron.schedule("* * * * * *", function () {
+    console.log('getNoResultSuggestion every 15 minutes');
+    cronService.getNoResultSuggestion();
+});
+
 module.exports = app;

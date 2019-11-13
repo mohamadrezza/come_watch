@@ -22,7 +22,7 @@ const helpers = {
     isValidExt(name) {
         let ext = this.getMovieExt(name);
 
-        return ['mkv', 'mp4', 'avi', 'mov', 'wmv', 'flv', 'mka'].includes(ext);
+        return ['mkv', 'mp4', 'avi', 'mov', 'wmv', 'flv'].includes(ext);
 
     },
 
@@ -69,7 +69,7 @@ const helpers = {
             name.includes('Sansor')
     },
     getQuality(link) {
-        let qualities = ['720p', '1080p', '480p', 'DVDRip', '720', '480', '1080', 'fullHD', 'hdcam', 'HDCAM', 'HD-CAM', 'hd-cam']
+        let qualities = ['720p', '1080p', '480p', 'DVDRip']
 
         let q = null;
         qualities.forEach(quality => {
@@ -91,7 +91,6 @@ const helpers = {
         }
 
 
-
         return q;
     },
     getRelease(link) {
@@ -107,7 +106,6 @@ const helpers = {
             'WEB DL',
             'WEBRip',
             'WEB Rip',
-            'BRRip',
             'HC',
             'BluRay',
             'WEB-DL',
@@ -152,19 +150,58 @@ const helpers = {
             await callback(array[index], index, array);
         }
     },
-    searchMovieDB(name){
+    searchMovieDB(name, year = null) {
         const MovieDB = require('moviedb')('6f0c625e9b7f81e80f475be102f64bfc');
         return new Promise((resolve, reject) => {
-            MovieDB.searchMovie({
+            let query = {
                 query: name
-            }, (err, res) => {
+            };
+
+
+            if (year !== null) {
+                query = {
+                    query: name,
+                    year: year,
+                }
+            }
+
+
+            MovieDB.searchMovie(query, (err, res) => {
                 resolve(res);
             });
         })
     },
-    getSize(link){
+    getSize(link) {
         link = link.match(/([0-9]+( |.[0-9]+)(mb|gb|kb|Bytes))/i)
-        return link && link.length>= 1 ? link[0] : null;
+        return link && link.length >= 1 ? link[0] : null;
+    },
+    generateCaption(movie, links) {
+        let caption = `${movie.name}\n`;
+
+        if (movie.imdb !== null && movie.imdb !== undefined) {
+            caption += ` ⭐IMDB: ${movie.imdb}\n`;
+        }
+
+        if (movie.description !== null && movie.description !== undefined) {
+            caption += '\n';
+            caption += ` ✍خلاصه داستان: ${movie.description}\n\n`;
+        }
+
+
+        links.forEach(li => {
+            caption += `📎 لینک دانلود: <a href="${li.link}">دانلود ${(li.quality || "") + " " + (li.release || "")}  ${li.size || ""} ${li.dubbed ? "Dubbed" : ""} ${li.censored ? "Censored" : ""}</a>\n`
+        })
+
+
+        caption += `ربات دانلود رایگان مستقیم فیلم و سریال\n@comewatch_bot`;
+
+        return caption;
+    },
+    escapeRegex(text) {
+        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    },
+    removeSpaces(text) {
+        return text.replace(/ +/g, '');
     }
 };
 

@@ -6,6 +6,8 @@ var logSchema = new mongoose.Schema({
   id: ObjectId,
   value: String,
   type: String,
+  is_movie:Boolean,
+  founded:String,
   user: {
     ref: "User",
     type: ObjectId
