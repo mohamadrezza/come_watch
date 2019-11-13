@@ -17,7 +17,8 @@ let urls = [
     "http://192.240.120.146/da03/fullhd/mkv/",
     'http://www.kingdomfantasy.com/videos/', //france
     'http://178.162.145.97/publicDL/Movies/', //netherland
-    'http://37.187.126.11/Films/' //france
+    'http://37.187.126.11/Films/', //france,
+    'http://192.240.120.146/da02/fullhd2/mkv/'
 ];
 let errors = [];
 urls.forEach(function (url) {
@@ -25,49 +26,47 @@ urls.forEach(function (url) {
     rp(url).then(htmlString => {
         let $ = cheerio.load(htmlString)
 
-        $('tr').each(function (i, elem) {
+        $('tr').each(async i => {
+            try {
 
+                let link = $('tr').eq(i).find('a').attr('href');
+                if (link != 'undefined' || !link == 'mkv/' || !link == 'mkv') {
+                    let name = $('tr').eq(i).find('a').text();
+                    let year = helper.getYearFromMovieName(name);
+                    let nameParsed = helper.parseMovieName(name, year)
+                    let file = await rp(url + link,{method:'HEAD'})
+                    var quality = helper.getQuality(link)
+                    var release = helper.getRelease(link)
+                    let dubbed = helper.isDubbed(link)
+                    let censored = helper.isSansored(link) //
+                    var result = {
+                        name: nameParsed,
+                        year: year,
+                        link: {
+                            link:url+link,
+                            quality: quality,
+                            size: helper.bytesToSize(file['content-length']),
+                            release: release,
+                            dubbed: dubbed,
+                            censored: censored
+                        }
 
-            let link = $(this).find('td').eq(1).find('a').attr('href');
-            let name = $(this).find('td').eq(1).find('a').text();
-
-            let year = helper.getYearFromMovieName(name);
-            let nameParsed = helper.parseMovieName(name, year)
-
-            let result = {
-                    name: nameParsed,
-                    link: url + link,
-                    linkName: $(this).find('td').eq(1).find('a').text(),
-                    year: year,
-                    size: $(this).find('td').eq(3).text(),
+                    }
+                    fs.appendFileSync('./../bin/ma_collection.json',JSON.stringify(result)+',')
                 }
-            ;
-
-            if (i === 2 || result.name == '' || link === undefined || result.size === '' || !helper.isValidExt(name)) {
-                //nothing
-                errors.push(result)
-            } else {
-                // console.log(i)
-                // console.log(result)
-                results.push(result)
-                //return false;
+            } catch (e) {
+                console.log(e)
             }
+
         });
 
 
-        console.log(`founded ${results.length}`)
-        console.log(`errors ${errors.length}`)
 
-        if (results.length > 1660) {
-            console.log('writing to file ...')
-            fs.writeFileSync('./ma_192.240.120.146.json', JSON.stringify(results))
-        }
+        // if (results.length > 1660) {
+        //     fs.appendFileSync('../bin/mammadCollection.json', JSON.stringify(results))
+        // }
 
     }).catch(e => {
         console.log(e)
     })
 })
-
-
-
-

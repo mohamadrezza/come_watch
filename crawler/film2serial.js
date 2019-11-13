@@ -76,6 +76,7 @@ function crawl() {
                     .then(async (file) => {
                       let result = {
                         name: nameParsed.replace(">", ""),
+                        year: year,
                         link: {
                           link: URL.resolve(url + monthUrl, link),
                           linkName: $(this)
@@ -86,21 +87,12 @@ function crawl() {
                           size: helper.bytesToSize(file["content-length"]),
                           dubbed: helper.isDubbed(link),
                           censored: helper.isSansored(link)
-                        },
-                        year: year,
+                        }
                       };
                       //await MovieController.create(result);
-                      results.push(result)
 
 
-                      console.log(results.length)
-                      //if(results.length >= 8208){
-                      console.time('writing')
-                      fs.writeFileSync('./film.json', JSON.stringify(results));
-                      console.timeEnd('writing');
-                      //}
-                      //console.log(result);
-                      //console.log("founded: " + results.length);
+                      fs.appendFileSync('../bin/film2serial.json', JSON.stringify(result) + ',');
                     })
                     .catch(async e => {
 
@@ -117,32 +109,21 @@ function crawl() {
                           dubbed: helper.isDubbed(link),
                           censored: helper.isSansored(link)
                         },
-                        year: year,
+                        year: year
                       };
 
 
                       //await MovieController.create(result);
-                      results.push(result);
+
+                      fs.appendFileSync('../bin/film2serial.json', JSON.stringify(result)+',');
 
 
-
-                      console.log(results.length)
-                      //if(results.length >= 8208){
-                      console.time('writing')
-                      fs.writeFileSync('./film.json', JSON.stringify(results));
-                      console.timeEnd('writing');
-                      //}
-
-                      //console.log(result);
-                      console.log("with error founded: " + results.length);
-
-                      // console.log("error " ,e);
                     });
                 }
               });
             })
             .catch(e => {
-              console.log("rrrrr " + URL.resolve(url, monthUrl));
+              console.log("error ! " + URL.resolve(url, monthUrl));
             });
 
 
