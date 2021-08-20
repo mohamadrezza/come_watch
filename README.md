@@ -16,7 +16,7 @@ manually get direct links with crawling them from available sources and store th
 user starts bot in telegram and search for movie/series by name,bot starts looking for name in database, and sends back fetched links to user.
 after specefic number of downloads user must join channel otherwise,user can't download anymore (you can remove this rule) 
 
-#screenshots
+# Screenshots
 ![movie](https://user-images.githubusercontent.com/61030263/130231295-592ade99-88db-4e57-9928-10efc64216b2.jpg)
 
 ![series](https://user-images.githubusercontent.com/61030263/130231341-d6a4cc4f-0ef1-45fc-a60c-ba5388d7c1d2.jpg)
