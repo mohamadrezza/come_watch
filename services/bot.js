@@ -100,12 +100,7 @@ exports.searchMovie = async (bot, msg, chatId) => {
         let searchText = helper.removeSpaces(msg.text);
         let searchLetterIndex = parseInt(searchText.length / 4);
         if (movies.length === 0) {
-            //query with complected regex
-            // const regex = new RegExp(helper.escapeRegex(msg.text.replace('/', '')), 'gi');
-            // movies = await Movie.find({"name": regex});
-            // console.log('query new algorithm => ' + msg.text);
-
-            // console.time('searchText');
+         
             if (searchText.length > 4) {
                 searchLetterIndex++;
                 for (var i = searchText.length; i > searchLetterIndex; i--) {
@@ -434,7 +429,6 @@ exports.linkSelect = async function (bot, msg, chatId) {
     let dubbed = helper.isDubbed(linkName);
     let censored = helper.isSansored(linkName);
 
-    // console.log(movie);
     let links = movie.link.filter(lin => {
 
         if (lin.censored === undefined) {

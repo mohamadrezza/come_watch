@@ -11,7 +11,7 @@ db.once("open", function callback() {
 
 });
 var Movie = require('../models/Movie')
-var movieData = fs.readFileSync('../bin/shahrdl4.json')
+var movieData = fs.readFileSync('path')
 var parsedData = JSON.parse(movieData.toString())
 parsedData.forEach(item => {
   Movie.create(item).then(movie => {

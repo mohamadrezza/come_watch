@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-let messageController = require('./../controllers/messageController');
+let messageController = require('../controller/messageController');
 
 
 /* POST messages income from telegram. */

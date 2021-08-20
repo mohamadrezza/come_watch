@@ -28,11 +28,6 @@ router.get('/', async function (req, res, next) {
         }
     });
 
-    // for (moment().startOf('day').)
-
-    // let todayUsersChart = todayUsers.map(function () {
-    //
-    // })
 
     let todayUsersChart = _.groupBy(todayUsers, function (user) {
         return moment(user.created_at).get('hour');

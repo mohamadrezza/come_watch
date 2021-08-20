@@ -42,15 +42,7 @@ var findCovers = async function () {
             }
             let src = $('.mode-simple').eq(0).find('.lister-item-image').find('img').attr('src');
             console.log(`founded ${movieName} => ${src}`)
-            // let log = await Log.findOneAndUpdate({
-            //     _id: no._id
-            // }, {
-            //     is_movie: true,
-            //     founded: title
-            // }, {
-            //     upsert: true,
-            //     setDefaultsOnInsert: true
-            // });
+
         })
 
     })

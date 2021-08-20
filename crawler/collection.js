@@ -2,7 +2,7 @@ var cheerio = require('cheerio')
 var helper = require('../helpers/helpers')
 var rp = require('request-promise')
 var fs = require('fs')
-var source = 'http://www.isdevelopment.us/Documents/Videos/Videos-Movies/'
+var source = ''
 
 async function crawl() {
     try {
