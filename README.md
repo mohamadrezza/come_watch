@@ -11,7 +11,6 @@ comewatch was a telegram bot for downloading movies with direct link!
 with filtering download movie websites we decided to make a telegram bot for dowloading movies for free!
 
 # how it works ?!
-get direct links with crawling them from available sources and store them in database.
+manually get direct links with crawling them from available sources and store them in database.
 
-user start bot in telegram and search for a movie by name,bot starts looking for movie name in database, and sends back fetched links to user
-![Uploading Xnip2021-08-13_15-07-19.jpg…]()
+user starts bot in telegram and search for a movie by name,bot starts looking for movie name in database, and sends back fetched links to user
